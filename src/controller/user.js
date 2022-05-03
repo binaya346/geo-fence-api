@@ -133,12 +133,17 @@ router.post("/tourist-log", authenticateToken, async (req, res) => {
   const { geofence, remark, status } = req.body;
   const user_id = req.loggedUser.id;
 
+  let isEntry = false;
+  if (status === "entry") {
+    isEntry = true;
+  }
+
   try {
     const geofenceId = await db.Geofence.findOne({ where: { name: geofence } });
     const result = await db.TouristLog.create({
       geofence: geofenceId.id,
       remark: remark || "",
-      isEntry: status || true,
+      isEntry,
       user_id,
     });
     response(res, 200, "Success", result);
