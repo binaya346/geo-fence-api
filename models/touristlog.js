@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
+      isEntry: {
+        type: DataTypes.BOOLEAN,
+        default: true,
+      },
       remark: DataTypes.TEXT,
     },
     {

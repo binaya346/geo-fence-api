@@ -9,6 +9,7 @@ const { response, authenticateToken } = require("../utils");
 const { Op } = require("sequelize");
 
 router.post("/login", async (req, res) => {
+  console.log(req.body, "body");
   const { password, email } = req.body;
   const user = await db.User.findOne({
     where: { email: email },
@@ -129,7 +130,7 @@ router.get("/tourists", async (req, res) => {
 });
 
 router.post("/tourist-log", authenticateToken, async (req, res) => {
-  const { geofence, remark } = req.body;
+  const { geofence, remark, status } = req.body;
   const user_id = req.loggedUser.id;
 
   try {
@@ -137,6 +138,7 @@ router.post("/tourist-log", authenticateToken, async (req, res) => {
     const result = await db.TouristLog.create({
       geofence: geofenceId.id,
       remark: remark || "",
+      isEntry: status || true,
       user_id,
     });
     response(res, 200, "Success", result);
