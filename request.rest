@@ -1,0 +1,33 @@
+# POST http://localhost:3000/geo
+# Content-Type: application/json
+
+# {
+#     "name":"Lumbini area",
+#     "state":"lumbini",
+#     "district":"unknown",
+#     "description":"this is the long descriiption"
+# }
+
+POST http://localhost:5000/geo
+Content-Type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmlqYWxiaW5heWEyQGdtYWlsLmNvbSIsImlhdCI6MTY0NzI0OTYxNH0.HxIClDv-Om7Gqka3Am58Y9Fj3eSX00S19CGAk54g7oQ
+
+{
+    "name":"Mount Everest",
+    "description":"This is the long descriiption for the geofence, This will include wyiwyg",
+    "longitude":86.922623,
+    "latitude":27.986065,
+    "radius":32,
+    "guid":10
+ }
+
+# GET http://localhost:5000/geo
+
+# POST http://localhost:5000/auth/login
+# Content-Type: application/json
+
+# {
+#     "email":"rijalbinaya2@gmail.com",
+#     "password":"binaya@123"
+# }
+
