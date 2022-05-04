@@ -45,6 +45,30 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/change-password", async (req, res) => {
+  const { password, email } = req.body;
+  const user = await db.User.findOne({
+    where: { email: email },
+  });
+
+  if (!user) {
+    return response(res, 400, "Email Doesnt exist");
+  }
+
+  try {
+    if (password.length > 5) {
+      user.password = await bcrypt.hash(password, 10);
+      user.save();
+      return res.status(200).send({ data: "Password changed successfully" });
+    } else {
+      return res.send({ error: "Password must consist atleast 5 characters" });
+    }
+  } catch (err) {
+    console.log(err, "error");
+    return res.status(500).send();
+  }
+});
+
 router.post("/register", async (req, res) => {
   console.log(req.body, "request.body");
   try {
@@ -156,7 +180,6 @@ router.post("/tourist-log", authenticateToken, async (req, res) => {
 router.get("/tourist-log", authenticateToken, async (req, res) => {
   const user_id = req.loggedUser.id;
   const tourist_id = req.query.id;
-
   const is_tourist = req.loggedUser.isTourist;
   let result;
   try {
@@ -174,7 +197,7 @@ router.get("/tourist-log", authenticateToken, async (req, res) => {
           {
             model: db.User,
             as: "log_user",
-            attributes: ["id", "firstName", "lastName"],
+            attributes: ["id", "firstName", "lastName", "email"],
           },
         ],
       });
@@ -182,7 +205,7 @@ router.get("/tourist-log", authenticateToken, async (req, res) => {
       if (tourist_id) {
         result = await db.TouristLog.findAll({
           where: {
-            user_id: is_tourist,
+            user_id: tourist_id,
           },
           include: [
             {
@@ -193,7 +216,7 @@ router.get("/tourist-log", authenticateToken, async (req, res) => {
             {
               model: db.User,
               as: "log_user",
-              attributes: ["id", "firstName", "lastName"],
+              attributes: ["id", "firstName", "lastName", "email"],
             },
           ],
         });
