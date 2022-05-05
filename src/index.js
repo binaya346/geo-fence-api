@@ -16,6 +16,6 @@ app.use(cors());
 app.use("/auth", user);
 app.use("/geo", geofence);
 
-app.listen(8080, () => {
+app.listen(5000, () => {
   console.log("Listening on port 8080");
 });

@@ -5,7 +5,7 @@ const { validateSchema } = require("../../models/user");
 const db = require("../../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { response, authenticateToken } = require("../utils");
+const { response, authenticateToken, authenticateAdmin } = require("../utils");
 const { Op } = require("sequelize");
 
 router.post("/login", async (req, res) => {
@@ -151,6 +151,51 @@ router.get("/tourists", async (req, res) => {
     ],
   });
   response(res, 200, "", user);
+});
+
+router.get("/tourists", async (req, res) => {
+  const { country, email, firstName, lastName } = req.query;
+  const where = { isTourist: true };
+  if (country) {
+    where.country = country;
+  }
+  if (email) {
+    where.email = email;
+  }
+  if (firstName) {
+    where.firstName = { [Op.like]: `%${firstName}%` };
+  }
+  if (lastName) {
+    where.lastName = { [Op.like]: `%${lastName}%` };
+  }
+
+  const user = await db.User.findAll({
+    where,
+    include: [
+      {
+        model: db.Country,
+        as: "user_country",
+        attributes: ["id", "name"],
+      },
+    ],
+  });
+  response(res, 200, "", user);
+});
+
+router.delete("/tourist/:id", authenticateAdmin, async (req, res) => {
+  const id = req.params.id;
+
+  const tourist = await db.User.findOne({ where: { id } });
+  if (!tourist) {
+    return response(res, 404, "Tourist not found");
+  }
+
+  try {
+    await tourist.destroy();
+    return response(res, 200, "success", "Deleted Successfully");
+  } catch (err) {
+    console.log(err, "error");
+  }
 });
 
 router.post("/tourist-log", authenticateToken, async (req, res) => {
